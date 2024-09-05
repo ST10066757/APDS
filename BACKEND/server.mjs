@@ -1,8 +1,8 @@
-import https from "https";
-import http from "http";
-import fs from "fs";
-import posts from "./routes/post.mjs";
-import users from "./routes/user.mjs";
+import https from "https"
+import http from "http"
+import fs from "fs"
+import posts from "./routes/post.mjs"
+import users from "./routes/user.mjs"
 import express from "express"
 import cors from "cors"
 
@@ -26,9 +26,9 @@ app.use((reg, res, next) => {
 
 app.use("/post", posts);
 app.route("/post", posts);
-// app.use("/user", users);
-// app.route("/user", users);
+app.use("/user", users);
+app.route("/user", users);
 
-let server = https.createServer(options, app)
+let server = https.createServer(options,app)
 console.log(PORT)
 server.listen(PORT);

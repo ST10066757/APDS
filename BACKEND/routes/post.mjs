@@ -1,47 +1,45 @@
 import express from "express";
 import db from "../db/conn.mjs";
 import { ObjectId } from "mongodb";
+import checkauth from "../check-auth.mjs";
 
 const router = express.Router();
 
-// //update a record by id 
-// router.patch("/:id", async(req, res) =>{
-//     const query = { _id: new ObjectId(req.params.id) };
-//     const updates = {
-//         $set: {
-//             name: req.body.name,
-//             comment: req.body.comment
-//         }
-//     };
+// Get all the records.
+router.get("/", async (req, res) => {
+    let collection = await db.collection("posts");
+    let results = await collection.find({}).toArray();
+    res.send(results).status(200);
+});
 
-//     let collection = await db.collection("posts");
-//     let result = await collection.updateOne(query, updates);
+//update a record by id 
+router.patch("/:id", checkauth, async(req, res) =>{
+    const query = { _id: new ObjectId(req.params.id) };
+    const updates = {
+        $set: {
+            name: req.body.name,
+            comment: req.body.comment
+        }
+    };
 
-//     res.send(result).status(200);
-// });
+    let collection = await db.collection("posts");
+    let result = await collection.updateOne(query, updates);
 
-// //Get a single record by id
-// router.get("/:id", async(req, res) =>{
-//     let collection = await db.collection("posts");
-//     let query = {_id: new ObjectId(req.params.id)};
-//     let results = await collection.findOne(query);
+    res.send(result).status(200);
+});
 
-//     if(!result) res.send("Not Found").status(404);
-//     else res.send(results).status(200);
-// });
+//Get a single record by id
+router.get("/:id", async(req, res) =>{
+    let collection = await db.collection("posts");
+    let query = {_id: new ObjectId(req.params.id)};
+    let results = await collection.findOne(query);
 
-// //delete a record
-// router.delete("/:id", async (req, res) => {
-//     const query = { _id: new ObjectId(req.params.id)};
-
-//     const collection = db.collection("posts");
-//     let result = await collection.deleteOne(query);
-
-//     res.send(result).status(200);
-// });
+    if(!results) res.send("Not Found").status(404);
+    else res.send(results).status(200);
+});
 
 //create a new record
-router.post("/upload", async (req, res) => {
+router.post("/upload", checkauth, async (req, res) => {
     let newDocument = {
         user: req.body.user,
         content: req.body.content,
@@ -52,10 +50,15 @@ router.post("/upload", async (req, res) => {
     res.send(result).status(204);
 });
 
-//get all the records
-router.get("/", async(req, res) =>{
-    let collection = await db.collection("posts");
-    let results = await collection.find({}).toArray();
+//delete a record
+router.delete("/:id", async (req, res) => {
+    const query = { _id: new ObjectId(req.params.id)};
 
-    res.send(results).status(200);
+    const collection = db.collection("posts");
+    let result = await collection.deleteOne(query);
+
+    res.send(result).status(200);
 });
+
+export default router;
+

@@ -11,7 +11,7 @@ const client = new MongoClient(connectionString);
 let conn;
 try{
     conn = await client.connect();
-    console.log("mongoDB is CONNECTED!!! :)");
+    console.log('mongoDB is CONNECTED!!! :)');
 } catch (e){
     console.error(e);
 }
